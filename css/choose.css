@@ -1,0 +1,108 @@
+/* Reset dasar */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+/* Container utama */
+.container {
+  background-image: url("../images/background.jpg");
+  background-size: contain;
+  background-position: center;
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Judul */
+.title {
+  margin-top: -20px;
+  margin-bottom: 60px;
+  text-align: center;
+}
+
+.title .line {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+}
+
+.title img {
+  width: 50px;
+  height: 50px;
+  margin: 2px;
+}
+
+/* Carousel container */
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffb5;
+  border-radius: 40px;
+  padding: 20px;
+  width: 90%;
+  max-width: 900px;
+  margin-bottom: 60px;
+  box-shadow: 0 0 10px #444;
+  position: relative;
+}
+
+/* Arrow buttons */
+.nav {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
+
+/* Pokémon list */
+.carousel {
+  display: flex;
+  gap: 30px;
+  overflow: hidden;
+}
+
+.pokemon {
+  text-align: center;
+  flex: 0 0 120px;
+}
+
+.pokemon img {
+  height: 100px;
+}
+
+.caption {
+  margin-top: 8px;
+  font-weight: bold;
+  color: black;
+  font-size: 18px;
+}
+
+/* Pokedex button */
+.pokedex-button {
+  background-color: black;
+  color: white;
+  font-size: 20px;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 30px;
+  transition: background-color 0.2s;
+}
+
+.pokedex-button:hover {
+  background-color: #333;
+}

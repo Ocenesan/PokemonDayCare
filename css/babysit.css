@@ -1,0 +1,129 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.container {
+  background-image: url("../images/bgpokemon.png");
+  background-size: contain;
+  background-position: center;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Status Panel Kiri */
+.status-panel {
+  position: absolute;
+  top: 30px;
+  left: 60px;
+  color: black;
+  font-size: 18px;
+}
+.status {
+  margin-bottom: 10px;
+}
+
+.status-bar {
+  margin-bottom: 10px;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  color: black;
+}
+
+.label {
+  margin-bottom: 2px;
+}
+
+.bar {
+  display: flex;
+  gap: 2px;
+  background-color: black;
+  padding: 2px;
+  width: max-content;
+}
+
+.block {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border: 1px solid black;
+}
+
+.block.filled {
+  background-color: green;
+}
+
+/* Icon Panel Kanan */
+.icon-panel {
+  position: absolute;
+  top: 30px;
+  right: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.icon {
+  width: 50px;
+  cursor: pointer;
+}
+
+/* Title + Level */
+.level {
+  text-align: center;
+  margin-top: -85px;
+  font-size: 20px;
+  background: #9F51FE;
+  color: white;
+  width: fit-content;
+  padding: 3px 10px;
+  border: 3px solid white;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.title {
+  text-align: center;
+  margin-top: 40px;
+}
+.title img {
+  width: 50px;
+}
+
+/* Pokemon */
+.pokemon {
+  text-align: center;
+  margin-top: 150px;
+}
+.pokemon img {
+  width: 200px;
+}
+
+/* Button Panel */
+.button-panel {
+  display: flex;
+  justify-content: center;
+  gap: 130px;
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+}
+.button-panel button {
+  padding: 10px 25px;
+  font-weight: bold;
+  border: 3px solid black;
+  color: white;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+}
+.feed { background: #61c100; }
+.sleep { background: #1e90ff; }
+.training { background: #d91e18; }
+.play { background: #f39c12; }
