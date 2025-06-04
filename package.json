@@ -1,0 +1,23 @@
+{
+  "name": "pokemondaycare",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ocenesan/PokemonDayCare.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ocenesan/PokemonDayCare/issues"
+  },
+  "homepage": "https://github.com/Ocenesan/PokemonDayCare#readme",
+  "dependencies": {
+    "phaser": "^3.90.0"
+  }
+}
