@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Evolution Pokemon</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8">
+  <title>Naming Pokemon</title>
+  <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="page2">    
+<div id="page2">
   <div class="container">
-    <!-- LEVEL -->
-    <div class="level">level 51</div>
 
     <!-- STATUS LEFT -->
     <div class="status-panel">
@@ -47,35 +45,33 @@
       <img src="images/icons/home.png" class="icon" alt="Home">
     </div>
 
-    <!-- Popup Evolusi -->
-    <div class="popup" id="evolutionPopup">
-      <div class="popup-header">
-        <img src="images/icons/upgrade.png" alt="Upgrade!" class="popup-title" />
-        <button class="close-btn" id="closePopupBtn">
-          <img src="images/icons/close_btn.png" alt="Close" />
-        </button>
-      </div>
-      <div class="popup-content">
-        <img src="images/pokemon/charmeleon.png" alt="Charmeleon" class="evolved-pokemon" />
-        <div class="pokemon-name">Charmeleon</div>
-      </div>
+    <!-- LEVEL -->
+    <div class="level">level 51</div>
+
+    <!-- INPUT NAME -->
+    <div class="search-box">
+      <img src="images/icons/box-input.png" alt="Input Box" class="input-box-image">
+      <input type="text" placeholder="Input pokemon name" class="search-input">
     </div>
 
-    <!-- BUTTON PANEL -->
+    <!-- Caption -->
+    <p class="caption">Are you sure you want name it that?</p>
+
+    <!-- EGG -->
+    <div class="egg">
+      <img src="images/pokemon/egg.png" alt="egg">
+    </div>
+
+    <!-- BUTTON NAMING -->
     <div class="button-panel">
-      <button class="feed">
-        <img src="images/icons/btn-feed.png" alt="feed">
+      <button class="confirm">
+        <img src="images/icons/confirm-hj.png" alt="confirm">
       </button>
-      <button class="sleep">
-        <img src="images/icons/btn-sleep.png" alt="sleep">
-      </button>
-      <button class="training">
-        <img src="images/icons/btn-training.png" alt="training">
-      </button>
-      <button class="play">
-        <img src="images/icons/btn-play.png" alt="play">
+      <button class="cancel">
+        <img src="images/icons/cancel.png" alt="cancel">
       </button>
     </div>
+
   </div>
 </div>
 </body>

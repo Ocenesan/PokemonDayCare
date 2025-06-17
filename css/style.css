@@ -142,7 +142,7 @@ body, html {
   font-weight: bold;
   color: #000000;
   font-size: 16px;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: 'Pixelify Sans';
 }
 
 /* button pokedex */
@@ -184,7 +184,7 @@ body, html {
   margin-top: -75px;
   border: none;
   background: transparent;
-  font-family: 'Pixelify Sans', Arial, sans-serif;
+  font-family: 'Pixelify Sans';
   font-size: 18px;
   width: 300px;
   text-align: center;
@@ -306,18 +306,18 @@ body, html {
 }
 
 /* POKEMON IMAGE */
-.pokemon {
+#page2 .pokemon {
   text-align: center;
-  margin-top: 300px;
+  margin-top: 200px;
 }
-.pokemon img {
-  max-width: 100%;
-  height: auto;
-  width: 200px;
+#page2 .pokemon img {
+  width: 150px;
+  transform: scale(1.8);
+  image-rendering: pixelated;
 }
 
 /* EVOLUTION POPUP */
-.evolution-popup {
+.popup {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -344,7 +344,7 @@ body, html {
   position: relative;
 }
 
-.upgrade-title {
+.popup-title {
   width: 100%;
   height: auto;
   display: block;
@@ -387,4 +387,270 @@ body, html {
   margin-top: 10px;
   font-size: 18px;
   font-family: 'Pixelify Sans';
+}
+
+/* NAMING POKEMON */
+#page2 .search-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -160px;
+  gap: 30px;
+}
+
+#page2 .input-box-image {
+  width: 400px;
+}
+
+#page2 .search-input {
+  padding: 10px 15px;
+  margin-top: -75px;
+  border: none;
+  background: transparent;
+  font-family: 'Pixelify Sans';
+  font-size: 18px;
+  width: 300px;
+  text-align: center;
+  outline: none;
+  position: relative;
+}
+
+#page2 .caption {
+  position: absolute;
+  margin-top: 160px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 50px);
+  font-family: 'Pixelify Sans';
+  font-size: 18px;
+  font-weight: bold;
+  color: #000000;
+  text-align: center;
+}
+
+#page2 .egg {
+  position: absolute;
+  margin-top: 40px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50px);
+  text-align: center;
+}
+
+#page2 .egg img {
+  width: 200px;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+/* CHOOSE FEED */
+.feed-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+  justify-content: left;
+  padding-left: 20px;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.popup-container {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-bg {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  display: block;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.berry-grid {
+  position: absolute;
+  top: 60px;
+  left: 5px;
+  transform: translateX(5px);
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 90%;
+}
+
+.berry-item {
+  border: 3px solid #6c5ce7;
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.berry-item:hover {
+  transform: translateY(-3px) scale(1.05);
+  border-color: #D3D9FF;
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.7);
+}
+
+.berry-item:active {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 3px rgba(255, 255, 255, 0.5);
+}
+
+.berry-item.selected {
+  border-color: #7B44FC;
+  background: linear-gradient(145deg, #d1f2eb, #B26BFB);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 3px rgba(255, 255, 255, 0.5);
+}
+
+.berry-item img {
+  width: 50px;
+  height: 50px;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.berry-item:hover img {
+  transform: scale(1.1);
+}
+
+.feeding-container {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: 0;
+}
+
+.berry {
+  width: 100px;
+  margin-left: -230px;
+}
+
+/* OPTION PLAY & TRAINING*/
+.option {
+  position: absolute;
+  left: 60px;
+  bottom: 230px;
+}
+
+.play-menu {
+  list-style: none;
+  font-family: 'Pixelify Sans';
+  font-size: 27px;
+  font-style: bold;
+  margin-top: -170px;
+  margin-left: -5px;
+}
+
+.play-menu li {
+  position: relative;
+  padding-left: 20px;
+  margin: 8px 20px;
+  cursor: pointer;
+}
+
+.play-menu li::before {
+  content: '▶';
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  color: black;
+}
+
+.play-menu li:hover::before {
+  visibility: visible;
+}
+
+.play-menu li:hover {
+  text-decoration: underline;
+}
+
+/*GAMEOVER*/
+.popup {
+  width: 300px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 10px;
+  text-align: center; 
+  padding-bottom: 20px;
+}
+
+.popup-text {
+  padding: 30px 15px;
+  text-align: center;
+}
+
+.popup-message {
+  font-family: sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  margin: 10px 0 5px;
+}
+
+.popup-submessage {
+  font-family: sans-serif;
+  font-size: 16px;
+  color: #000;
+  margin: 0;
+}
+
+.restart-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.restart-btn img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.restart-btn:hover img{
+    transform: scale(1.05);
+}
+
+/*BAG*/
+.items {
+  position: fixed;
+  margin-top: 80px;
+  margin-left: 450px;
+  left: 50px;
+  top: 50px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; 
+}
+
+.items img {
+  width: 100%; 
+  height: auto;
+  display: block;
 }
