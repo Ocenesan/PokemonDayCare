@@ -1,0 +1,406 @@
+/* RESET DASAR & UMUM */Add commentMore actions
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Pixelify Sans', Arial, sans-serif;
+} */
+
+/* STATUS PANEL (popup & babysit) */Add commentMore actions
+#page2 .container {
+  background-image: url("../public/assets/images/bgpokemon.png");
+  background-size: contain;
+  background-position: center;
+}
+
+#page2 .status-panel {
+  position: absolute;
+  top: 30px;
+  left: 60px;
+  color: #000000;
+  font-size: 18px;
+}
+
+#page2 .status-bar {
+  margin-bottom: 0;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  color: #000000;
+}
+
+#page2 .label {
+  margin-bottom: 0px;
+}
+
+#page2 .bar {
+  padding: 4px;
+}
+
+#page2 .bar img {
+  width: 120px;
+  height: 20px;
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* ICON PANEL */
+#page2 .icon-panel {
+  position: absolute;
+  top: 30px;
+  right: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#page2 .icon {
+  width: 50px;
+  cursor: pointer;
+}
+
+#page2 .icon:hover {
+  transform: scale(1.05);
+}
+
+/* LEVEL */
+#page2 .level {
+  text-align: center;
+  margin-top: -65px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -250px);
+  font-size: 20px;
+  font-family: 'Aldrich';
+  background: #9F51FE;
+  color: #FFFFFF;
+  padding: 3px 10px;
+  border: 3px solid #FFFFFF;
+  border-radius: 10px;
+  position: absolute;
+}
+
+/* BUTTON PANEL */
+#page2 .button-panel {
+  display: flex;
+  justify-content: center;
+  gap: 130px;
+  position: absolute;
+  bottom: 30px;
+}
+#page2 .button-panel button {
+  background: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+}
+
+#page2 .button-panel button img {
+  width: 120px;  
+  height: auto; 
+}
+
+#page2 .button-panel button:hover img {
+    transform: scale(1.05);
+}
+
+
+/* PROFILE */
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Pixelify.sans';
+margin-top: 120px;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+
+.pokemon-card {
+background: #f8f9fa;
+border-radius: 20px;
+width: 900px;
+padding: 25px;
+box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+position: relative;
+}
+
+.header {
+background: #E8A95E;
+color: white;
+width: 350px;
+padding: 15px 15px;
+border-radius: 30px;
+font-family: 'Pixelify.sans';
+font-size: 20px;
+font-weight: 600;
+text-align: center;
+}
+
+.close-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  z-index: 10;
+}
+
+.close-btn img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.close-btn:hover img{
+    transform: scale(1.05);
+}
+
+.main-content {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+align-items: start;
+}
+
+.pokemon-image {
+text-align: center;
+margin-top: 20px;
+}
+
+.pokemon {
+margin-left: 20px;
+filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.drop-shadow {
+  position: relative;
+  margin-top: -70px;
+}
+
+.evolution-chain {
+  position: absolute;
+  bottom: 30px; 
+  gap: 30px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  pointer-events: none;
+}
+
+.evolution-sprite {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.evolution-sprite img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-left: -900px;
+  margin-top: 50px;
+}
+
+.evolution-names {
+  position: relative;
+  display: flex;
+  gap: 100px;
+  justify-content: left;
+  margin-top: 100px;
+  margin-left: 30px;
+  font-size: 16px;
+  color: #000000;
+}
+
+.evolution-names span {
+  width: 40px;
+  text-align: center;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.weaknesses {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.weaknesses h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.weakness-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.weakness-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.weakness-btn.water {
+  background: #1DA8D4;
+}
+
+.weakness-btn.ground {
+  background: #E9D227;
+}
+
+.weakness-btn.rock {
+  background: #9A8D26;
+}
+
+.weakness-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.weakness-btn:active {
+  transform: translateY(0);
+}
+
+.story {
+  margin: 10px 0;
+}
+
+.story h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 8px;
+}
+
+.story p {
+  font-size: 16px;
+  color: #000000;
+  line-height: 1.4;
+}
+
+.version {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.version h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.version-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.version-btn {
+  padding: 6px 16px;
+  border: 2px solid #ddd;
+  border-radius: 15px;
+  background: white;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #000000;
+}
+
+.version-btn:hover {
+  border-color: #EF8E18;
+  color: #EF8E18;
+  transform: translateY(-1px);
+}
+
+.version-btn.active {
+  background: #EF8E18;
+  border-color: #EF8E18;
+  color: white;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.stat-box {
+  background: white;
+  border: 2px solid #FFC5BA;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  width: 100px;
+  height: 80px;
+}
+
+.stat-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.gender-icons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.stat-value.gender-icons {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  align-items: center;
+}
+
+.male {
+  color: #42A5F5;
+}
+
+.female {
+  color: #EC407A;
+}
+
+.male, .female {
+  font-size: 18px;
+  font-weight: bold;
+}

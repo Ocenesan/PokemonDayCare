@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profile</title>
+  <link rel="stylesheet" href="src/profile.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="page2">    
+  <div class="container">
+    <!-- LEVEL -->
+    <div class="level">level 51</div>
+
+    <!-- STATUS LEFT -->
+    <div class="status-panel">
+        <!-- STATUS TIRED -->
+        <div class="status-bar">
+            <div class="label">TIRED: <span id="tired-value">0</span></div>
+            <div class="bar">
+              <img src="public/assets/images/icons/progress1.png" alt="status" class="status">
+            </div>
+        </div>
+
+        <!-- STATUS HUNGER -->
+        <div class="status-bar">
+            <div class="label">HUNGER: <span id="hunger-value">0</span></div>
+            <div class="bar">
+                <img src="public/assets/images/icons/progress1.png" alt="status" class="status">
+            </div>
+        </div>
+
+        <!-- STATUS BOREDOM -->
+        <div class="status-bar">
+            <div class="label">BOREDOM: <span id="boredom-value">0</span></div>
+            <div class="bar">
+                <img src="public/assets/images/icons/progress1.png" alt="status" class="status">
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT ICON PANEL -->
+    <div class="icon-panel">
+      <img src="public/assets/images/icons/profile.png" class="icon" alt="Profile">
+      <img src="public/assets/images/icons/bag.png" class="icon" alt="Backpack">
+      <img src="public/assets/images/icons/home.png" class="icon" alt="Home">
+    </div>
+
+    <!-- PROFILE -->
+    <div class="pokemon-card">
+        <div class="header">
+            Charmeleon
+        </div>
+        <button class="close-btn" id="closePopupBtn">
+          <img src="public/assets/images/icons/close-red.png" alt="Close" />
+        </button>
+
+        <div class="main-content">
+            <div class="pokemon-image">
+                <div class="pokemon">
+                    <img src="public/assets/images/pokemon/charmeleon.png" alt="Charmeleon">
+                </div>
+                <div class="drop-shadow">
+                    <img src="public/assets/images/icons/shadow.png">
+                </div>
+            <div class="evolution-chain">
+                <img src="public/assets/images/icons/evolution.png" alt="border-evolution">
+                <div class="evolution-sprite"><img src="public/assets/images/pokemon/charmander.png" alt="Charmander"></div>
+                <div class="evolution-sprite"><img src="public/assets/images/pokemon/charmeleon.png" alt="Charmeleon"></div>
+                <div class="evolution-sprite"><img src="public/assets/images/pokemon/charizard.png" alt="Charizard"></div>
+            </div>
+            <div class="evolution-names">
+                <span>Charmander</span>
+                <span>Charmeleon</span>
+                <span>Charizard</span>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="weaknesses">
+                    <h3>Weaknesses</h3>
+                    <div class="weakness-buttons">
+                        <button class="weakness-btn water" onclick="handleWeaknessClick('Water')">Water</button>
+                        <button class="weakness-btn ground" onclick="handleWeaknessClick('Ground')">Ground</button>
+                        <button class="weakness-btn rock" onclick="handleWeaknessClick('Rock')">Rock</button>
+                    </div>
+                </div>
+                
+                <div class="story">
+                    <h3>Story</h3>
+                    <p>When it swings its burning tail, the temperature around it rises higher and higher, tormenting its opponents.</p>
+                </div>
+                
+                <div class="version">
+                    <h3>Version</h3>
+                    <div class="version-buttons">
+                        <button class="version-btn active" onclick="handleVersionClick('Normal')">Normal</button>
+                        <button class="version-btn" onclick="handleVersionClick('Shiny')">Shiny</button>
+                    </div>
+                    <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Category</div>
+                        <div class="stat-value">Flame</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Gender</div>
+                        <div class="stat-value gender-icons">
+                        <span class="male">♂</span>
+                        <span class="female">♀</span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Abilities</div>
+                        <div class="stat-value">Blaze</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Height</div>
+                        <div class="stat-value">3'07"</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Weight</div>
+                        <div class="stat-value">41.9 lbs</div>
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function handleVersionClick(version) {
+            document.querySelectorAll('.version-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            event.target.classList.add('active');
+            
+            alert(`Switched to ${version} version!`);
+            console.log(`${version} version selected`);
+
+            if (version === 'Shiny') {
+                document.querySelector('.charmeleon-sprite').style.filter = 'hue-rotate(60deg) saturate(1.5) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))';
+            } else {
+                document.querySelector('.charmeleon-sprite').style.filter = 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))';
+            }
+        }
+    </script>
+
+  </div>
+</div>
+</body>
+</html>
