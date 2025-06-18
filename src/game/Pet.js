@@ -2,12 +2,6 @@ import * as PokeAPI from './PokeAPIService.js';
 
 // Gunakan EventEmitter bawaan Phaser untuk komunikasi antar kelas
 export default class Pet extends Phaser.Events.EventEmitter {
-    /**
-     * @param {Phaser.Scene} scene - Scene tempat pet ini akan ditampilkan.
-     * @param {number} x - Posisi X awal di scene.
-     * @param {number} y - Posisi Y awal di scene.
-     * @param {object} pokemonRegistryData - Data yang disimpan di registry.
-     */
     constructor(scene, x, y, pokemonRegistryData) {
         super(); // Penting untuk mengaktifkan EventEmitter
 
@@ -25,7 +19,11 @@ export default class Pet extends Phaser.Events.EventEmitter {
             exp: 0,
             maxExp: 50,
             level: 1,
-            berries: 5        // Inventaris awal
+            inventory: {
+                'cheri': 3,
+                'pecha': 2,
+                'oran': 5
+            }
         };
 
         // Buat DOM Element untuk menampilkan GIF
@@ -51,11 +49,23 @@ export default class Pet extends Phaser.Events.EventEmitter {
     }
 
     // --- Metode Aksi yang Dipanggil dari Scene ---
-    feed() {
-        if (this.isAsleep || this.stats.berries <= 0) return;
-        this.stats.berries--;
-        this.stats.hunger = Math.min(100, this.stats.hunger - 30);
-        this.emit('onStatChange', this.stats); // Pancarkan event perubahan status
+    feed(berryName) {
+        if (this.isAsleep || !this.stats.inventory[berryName] || this.stats.inventory[berryName] <= 0) {
+            return;
+        }
+        this.stats.inventory[berryName]--;
+
+        let hungerGain = 20; // Default gain
+        if (berryName === 'oran') hungerGain = 30;
+        if (berryName === 'pecha') this.stats.boredom = Math.min(100, this.stats.boredom + 10);
+        this.stats.hunger = Math.min(100, this.stats.hunger + hungerGain);
+        
+        if (this.stats.inventory[berryName] <= 0) {
+            delete this.stats.inventory[berryName];
+        }
+
+        this.emit('onStatChange', this.stats);
+        this.emit('onInventoryChange', this.stats.inventory); 
     }
 
     play(type) {
@@ -75,32 +85,44 @@ export default class Pet extends Phaser.Events.EventEmitter {
         this.emit('onStatChange', this.stats);
     }
 
-    train(type) {
+    async train(type) {
         if (this.isAsleep) return;
         switch (type) {
             case 'battle':
-                this.stats.hunger -= 8;
-                this.stats.boredom -= 4;
-                this.stats.tiredness -= 5;
+                this.stats.hunger -= 8; this.stats.boredom -= 4; this.stats.tired -= 5;
                 this.addExp(50);
                 break;
-            case 'strolling':
-                this.stats.hunger -= 4;
-                this.stats.boredom += 8;
-                this.stats.tiredness -= 2;
-                this.addExp(15);
-                break;
             case 'hunting':
-                this.stats.hunger -= 5;
-                this.stats.boredom -= 5;
-                this.stats.tiredness -= 10;
-                this.stats.berries += 3;
+                this.stats.hunger -= 5; this.stats.boredom -= 5; this.stats.tired -= 10;
+                this.stats.berries += 3; // Asumsi 'berries' adalah properti lama, kita ganti ke inventory
                 this.addExp(25);
+                break;
+            // --- LOGIKA BARU UNTUK STROLLING ---
+            case 'strolling':
+                this.stats.hunger -= 4; this.stats.boredom += 8; this.stats.tired -= 5;
+                
+                // Ambil 3 berry acak
+                console.log("Strolling for berries...");
+                for (let i = 0; i < 3; i++) {
+                    const randomBerryId = Phaser.Math.Between(1, 64);
+                    const berryData = await PokeAPI.getBerry(randomBerryId);
+                    if (berryData) {
+                        const berryName = berryData.name;
+                        if (this.stats.inventory[berryName]) {
+                            this.stats.inventory[berryName]++;
+                        } else {
+                            this.stats.inventory[berryName] = 1;
+                        }
+                        console.log(`Found a ${berryName} berry!`);
+                    }
+                }
+                this.emit('onInventoryChange', this.stats.inventory);
+                this.addExp(15);
                 break;
         }
         this.stats.hunger = Math.max(0, this.stats.hunger);
         this.stats.boredom = Math.max(0, this.stats.boredom);
-        this.stats.tiredness = Math.max(0, this.stats.tiredness);
+        this.stats.tired = Math.max(0, this.stats.tired);
         this.emit('onStatChange', this.stats);
     }
 
@@ -116,7 +138,7 @@ export default class Pet extends Phaser.Events.EventEmitter {
     wakeUp() {
         if (!this.isAsleep) return;
         this.isAsleep = false;
-        this.stats.tiredness = Math.min(100, this.stats.tiredness + 60); // Pulih banyak saat bangun
+        this.stats.tired = Math.min(100, this.stats.tired + 60); // Pulih banyak saat bangun
         const petSpriteDiv = this.gameObject.node.querySelector('#pet-sprite');
         petSpriteDiv.style.backgroundImage = `url(${this.spriteUrls.animated})`;
         petSpriteDiv.style.opacity = '1';
@@ -127,11 +149,11 @@ export default class Pet extends Phaser.Events.EventEmitter {
     // --- Logika Internal Pet ---
     decreaseStats() {
         if (this.isAsleep) {
-            this.stats.tiredness = Math.min(100, this.stats.tiredness + 10);
+            this.stats.tired = Math.min(100, this.stats.tired + 10);
         } else {
             this.stats.hunger = Math.max(0, this.stats.hunger - 4);
             this.stats.boredom = Math.max(0, this.stats.boredom - 3);
-            this.stats.tiredness = Math.max(0, this.stats.tiredness - 2);
+            this.stats.tired = Math.max(0, this.stats.tired - 2);
         }
         this.emit('onStatChange', this.stats);
         this.checkFailureConditions();
@@ -194,7 +216,7 @@ export default class Pet extends Phaser.Events.EventEmitter {
         } else if (this.stats.boredom < 20) {
             this.emit('onRunAway', 'Your Pokémon ran away from boredom!');
             this.decayTimer.destroy();
-        } else if (this.stats.tiredness < 25) {
+        } else if (this.stats.tired < 25) {
             this.emit('onFaint', 'Your Pokémon fainted from exhaustion!');
             this.decayTimer.destroy();
         }
@@ -207,6 +229,6 @@ export default class Pet extends Phaser.Events.EventEmitter {
     destroy() {
         if (this.decayTimer) this.decayTimer.destroy();
         if (this.gameObject) this.gameObject.destroy();
-        this.removeAllListeners(); // Hapus semua event listener
+        this.removeAllListeners();
     }
 }
