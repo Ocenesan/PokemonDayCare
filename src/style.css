@@ -217,3 +217,25 @@ canvas {
 .play-menu li:hover {
   text-decoration: underline;
 }
+
+/* ==========================================================================
+   4. Gaya untuk Elemen DOM Kustom
+   ========================================================================== */
+
+/* Gaya untuk input field di SearchPokemonScene */
+.pokemon-input {
+  width: 200px; /* Sesuaikan dengan lebar gambar box-input.png */
+  height: 50px; /* Sesuaikan dengan tinggi gambar box-input.png */
+  padding: 10px;
+  
+  /* Hilangkan tampilan default browser */
+  background: transparent;
+  border: none;
+  outline: none;
+  
+  /* Atur font dan teks */
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 20px;
+  color: #000000;
+  text-align: center;
+}

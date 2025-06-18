@@ -4,8 +4,8 @@ import Phaser from 'phaser';
 import HomescreenScene from './scenes/HomescreenScene.js';
 // Impor scene lain di sini nanti
 import ChoosePokemonScene from './scenes/ChoosePokemonScene.js';
-//import SearchPokemonScene from './scenes/SearchPokemonScene.js';
-//import MainGameScene from './scenes/MainGameScene.js';
+import SearchPokemonScene from './scenes/SearchPokemonScene.js';
+import MainGameScene from './scenes/MainGameScene.js';
 
 const config = {
     type: Phaser.AUTO, // Otomatis pilih WebGL atau Canvas
@@ -18,12 +18,16 @@ const config = {
         height: 600, // Semua penempatan aset akan didasarkan pada ukuran ini
     },
     
+    dom: {
+        createContainer: true
+    },
+
     scene: [
         // Daftarkan semua scene Anda di sini. Urutan pertama akan dijalankan lebih dulu.
         //HomescreenScene,
         ChoosePokemonScene,
-        //SearchPokemonScene,
-        // MainGameScene,
+        SearchPokemonScene,
+        MainGameScene,
     ]
 };
 
