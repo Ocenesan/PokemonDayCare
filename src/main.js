@@ -1,24 +1,29 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+import Phaser from 'phaser';
+import HomescreenScene from './scenes/HomescreenScene.js';
+// Impor scene lain di sini nanti
+import ChoosePokemonScene from './scenes/ChoosePokemonScene.js';
+// import BabysitScene from './scenes/BabysitScene.js';
 
-setupCounter(document.querySelector('#counter'))
+const config = {
+    type: Phaser.AUTO, // Otomatis pilih WebGL atau Canvas
+    parent: 'game-container',
+    // Gunakan Scale Manager untuk membuat game responsif
+    scale: {
+        mode: Phaser.Scale.FIT, // Cocokkan dengan ukuran layar, pertahankan rasio aspek
+        autoCenter: Phaser.Scale.CENTER_BOTH, // Pusatkan kanvas secara horizontal dan vertikal
+        width: 800,  // Ini adalah resolusi LOGIS game Anda
+        height: 600, // Semua penempatan aset akan didasarkan pada ukuran ini
+    },
+    
+    scene: [
+        // Daftarkan semua scene Anda di sini. Urutan pertama akan dijalankan lebih dulu.
+        HomescreenScene,
+        ChoosePokemonScene,
+        // BabysitScene
+    ]
+};
+
+// Buat game baru dengan konfigurasi di atas
+const game = new Phaser.Game(config);
