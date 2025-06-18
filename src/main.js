@@ -4,7 +4,8 @@ import Phaser from 'phaser';
 import HomescreenScene from './scenes/HomescreenScene.js';
 // Impor scene lain di sini nanti
 import ChoosePokemonScene from './scenes/ChoosePokemonScene.js';
-// import BabysitScene from './scenes/BabysitScene.js';
+//import SearchPokemonScene from './scenes/SearchPokemonScene.js';
+//import MainGameScene from './scenes/MainGameScene.js';
 
 const config = {
     type: Phaser.AUTO, // Otomatis pilih WebGL atau Canvas
@@ -19,9 +20,10 @@ const config = {
     
     scene: [
         // Daftarkan semua scene Anda di sini. Urutan pertama akan dijalankan lebih dulu.
-        HomescreenScene,
+        //HomescreenScene,
         ChoosePokemonScene,
-        // BabysitScene
+        //SearchPokemonScene,
+        // MainGameScene,
     ]
 };
 

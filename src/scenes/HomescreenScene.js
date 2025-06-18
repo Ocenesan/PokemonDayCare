@@ -25,7 +25,7 @@ export default class HomescreenScene extends Phaser.Scene {
 
         // Teks Petunjuk di Bawah Tombol
         this.pressStartText = this.add.text(0, 0, 'Press Start to Play', {
-            fontFamily: 'sans-serif',
+            fontFamily: 'Pixelify Sans',
             fontSize: '18px',
             color: '#000000',
             stroke: '#ffffff',

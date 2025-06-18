@@ -28,7 +28,7 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #222; /* Warna latar belakang di sekitar game */
-  font-family: 'Pixelify Sans', sans-serif; /* Font default untuk elemen HTML */
+  font-family: Pixelify Sans, sans-serif, Arial; /* Font default untuk elemen HTML */
 }
 
 /* Aturan untuk kanvas game Phaser */
