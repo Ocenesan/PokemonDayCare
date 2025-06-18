@@ -21,7 +21,7 @@ export default class Pet extends Phaser.Events.EventEmitter {
         this.stats = {
             hunger: 100,      // Kenyang
             boredom: 100,     // Senang
-            tiredness: 100,   // Segar
+            tired: 100,   // Segar
             exp: 0,
             maxExp: 50,
             level: 1,
@@ -29,7 +29,16 @@ export default class Pet extends Phaser.Events.EventEmitter {
         };
 
         // Buat DOM Element untuk menampilkan GIF
-        const petHtml = `<div id="pet-sprite" style="width:96px;height:96px;background-image:url(${this.spriteUrls.animated});background-size:contain;background-repeat:no-repeat;background-position:center;image-rendering:pixelated;transform:scale(2.5);"></div>`;
+        const petHtml = `<div id="pet-sprite" style="
+            width:96px;
+            height:96px;
+            background-image:url(${this.spriteUrls.animated});
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            image-rendering: pixelated;
+            transform:scale(2);
+        "></div>`;
         this.gameObject = scene.add.dom(x, y).createFromHTML(petHtml);
 
         // Timer untuk mengurangi status secara berkala

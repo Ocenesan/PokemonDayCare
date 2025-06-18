@@ -13,14 +13,16 @@ export default class MainGameScene extends Phaser.Scene {
         this.load.image('sleepButton', 'assets/images/icons/btn-sleep.png');
         this.load.image('trainingButton', 'assets/images/icons/btn-training.png');
         this.load.image('playButton', 'assets/images/icons/btn-play.png');
-        this.load.image('statusBar', 'assets/images/icons/status.png');
+        this.load.image('fullStatusBar', 'assets/images/icons/full-bar.png');
+        this.load.image('emptyStatusBar', 'assets/images/icons/empty-bar.png');
         this.load.image('profileIcon', 'assets/images/icons/profile.png');
         this.load.image('bagIcon', 'assets/images/icons/bag.png');
-        this.load.image('homeButton', 'assets/images/icons/home.png');
+        this.load.image('homeIcon', 'assets/images/icons/home.png');
+        this.load.image('popup-box', 'assets/images/icons/option.png');
     }
 
     create() {
-        this.add.image(this.scale.width / 2, this.scale.height / 2, 'game-bg');
+        this.background = this.add.image(this.scale.width / 2, this.scale.height / 2, 'game-bg');
         const pokemonRegistryData = this.registry.get('playerPokemon');
 
         if (!pokemonRegistryData) {
@@ -47,36 +49,69 @@ export default class MainGameScene extends Phaser.Scene {
     createUI() {
         // Status Bars
         this.ui.statusBars = {};
-        ['Hunger', 'Boredom', 'Tiredness'].forEach(status => {
-            const label = this.add.text(0, 0, status.toUpperCase() + ':', { fontSize: '18px', fontFamily: 'Aldrich' });
-            const bar = this.add.image(0, 25, 'statusBar').setOrigin(0, 0.5).setScale(1.2, 1);
-            this.ui.statusBars[status.toLowerCase()] = { label, bar, container: this.add.container(0,0,[label, bar]) };
+        const statusKeys = ['TIRED', 'HUNGER', 'BOREDOM'];
+        statusKeys.forEach((status, index) => { // Tambahkan 'index' di sini
+            const label = this.add.text(0, 0, `${status}: 100`, { 
+                fontSize: '16px', 
+                fontFamily: 'Arial',
+                color: '#000000',
+                fontStyle: 'bold'
+            }).setOrigin(0, 0.5);
+
+            const emptyBar = this.add.image(0, 20, 'emptyStatusBar').setOrigin(0, 0.5).setScale(0.8);
+            const fullBar = this.add.image(0, 20, 'fullStatusBar').setOrigin(0, 0.5).setScale(0.8);
+            const container = this.add.container(0, 0, [label, emptyBar, fullBar]);
+            this.ui.statusBars[status.toLowerCase()] = { 
+                label, 
+                bar: fullBar, 
+                container 
+            };
+
+            // --- TAMBAHAN: Simpan referensi ke container status bar terakhir ---
+            if (index === statusKeys.length - 1) {
+                this.ui.lastStatusBarContainer = container;
+            }
         });
 
+        // Icon Panel Kanan
+        this.ui.iconPanel = {
+            profile: this.add.image(0, 0, 'profileIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5),
+            bag: this.add.image(0, 0, 'bagIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5),
+            home: this.add.image(0, 0, 'homeIcon').setInteractive({ cursor: 'pointer' }).setScale(0.07)
+        };
+        
         // Tombol Aksi Utama
-        this.ui.feedButton = this.add.image(0, 0, 'feedButton').setInteractive({ cursor: 'pointer' })
-            .on('pointerdown', () => this.playerPet.feed());
-        this.ui.sleepButton = this.add.image(0, 0, 'sleepButton').setInteractive({ cursor: 'pointer' })
-            .on('pointerdown', () => this.playerPet.isAsleep ? this.playerPet.wakeUp() : this.playerPet.sleep());
-        this.ui.playButton = this.add.image(0, 0, 'playButton').setInteractive({ cursor: 'pointer' })
-            .on('pointerdown', () => this.showSubMenu('play'));
-        this.ui.trainingButton = this.add.image(0, 0, 'trainingButton').setInteractive({ cursor: 'pointer' })
-            .on('pointerdown', () => this.showSubMenu('train'));
+        this.ui.actionButtons = {
+            feed: this.add.image(0, 0, 'feedButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.playerPet.feed()),
+            sleep: this.add.image(0, 0, 'sleepButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.playerPet.isAsleep ? this.playerPet.wakeUp() : this.playerPet.sleep()),
+            training: this.add.image(0, 0, 'trainingButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.showSubMenu('train')),
+            play: this.add.image(0, 0, 'playButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.showSubMenu('play'))
+        };
 
-        // Elemen Lain
-        this.ui.levelText = this.add.text(0, 0, `Level ${this.playerPet.stats.level}`, { fontFamily: 'Pixelify Sans', fontSize: '20px', color: '#fff' }).setOrigin(0.5);
-        this.ui.berryText = this.add.text(0, 0, `Berries: ${this.playerPet.stats.berries}`, { fontSize: '16px' }).setOrigin(1, 0);
+        // Level Text
+        this.ui.levelText = this.add.text(0, 0, `level ${String(this.playerPet.stats.level).padStart(2, '0')}`, { 
+            fontFamily: 'Pixelify Sans', 
+            fontSize: '16px', 
+            color: '#ffffff',
+            backgroundColor: '#9F51FE',
+            padding: { x: 8, y: 4 }
+        }).setOrigin(0.5);
+
+        // Tambahkan border putih di sekitar teks level secara manual
+        this.ui.levelBorder = this.add.graphics();
     }
     
     // --- Fungsi Update Tampilan ---
     updateUI(stats) {
         Object.keys(this.ui.statusBars).forEach(key => {
-            const barImage = this.ui.statusBars[key].bar;
+            const statName = key.charAt(0).toUpperCase() + key.slice(1);
+            const { label, bar } = this.ui.statusBars[key];
+            
+            label.setText(`${statName.toUpperCase()}: ${stats[key]}`);
+            
             const percentage = stats[key] / 100;
-            // Gunakan setCrop untuk mengubah lebar bar secara visual
-            barImage.setCrop(0, 0, barImage.width * percentage, barImage.height);
+            bar.setCrop(0, 0, bar.texture.source[0].width * percentage, bar.height);
         });
-        this.ui.berryText.setText(`Berries: ${stats.berries}`);
     }
     
     // --- Fungsi Logika UI ---
@@ -87,16 +122,30 @@ export default class MainGameScene extends Phaser.Scene {
             ? [{ text: 'Groom', action: 'groom' }, { text: 'Pet', action: 'pet' }, { text: 'Toys', action: 'toys' }]
             : [{ text: 'Battle', action: 'battle' }, { text: 'Strolling', action: 'strolling' }, { text: 'Hunting', action: 'hunting' }];
 
-        const { width, height } = this.scale;
-        const menuContainer = this.add.container(width/2, height*0.5);
+        // Dapatkan posisi dari container status bar terakhir
+        const anchorX = this.ui.lastStatusBarContainer.x;
+        const anchorY = this.ui.lastStatusBarContainer.y;
+
+        // Buat container menu
+        const menuContainer = this.add.container(0, 0); // Posisi awal di 0,0
         this.ui.subMenu = menuContainer;
 
-        const bg = this.add.image(0, 0, 'popup-box').setScale(0.8);
+        // Gambar background menu
+        const bg = this.add.image(0, 0, 'popup-box').setScale(0.7).setOrigin(0, 0); // Origin di kiri atas
         menuContainer.add(bg);
 
+        // Tambahkan opsi-opsi menu
         options.forEach((opt, index) => {
-            const yPos = -50 + index * 50;
-            const optText = this.add.text(0, yPos, opt.text, { fontSize: '24px', color: '#333' }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
+            // Posisikan teks di dalam background
+            const yPos = 30 + (index * 35); // Sesuaikan padding dan jarak
+            const xPos = bg.displayWidth / 2; // Tepat di tengah background
+            
+            const optText = this.add.text(xPos, yPos, opt.text, { 
+                fontFamily: 'Pixelify Sans', 
+                fontSize: '22px', 
+                color: '#333' 
+            }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
+            
             optText.on('pointerdown', () => {
                 if (type === 'play') this.playerPet.play(opt.action);
                 if (type === 'train') this.playerPet.train(opt.action);
@@ -104,6 +153,16 @@ export default class MainGameScene extends Phaser.Scene {
                 this.ui.subMenu = null;
             });
             menuContainer.add(optText);
+        });
+
+        menuContainer.setPosition(anchorX, anchorY + 60); 
+
+        menuContainer.setAlpha(0);
+        this.tweens.add({
+            targets: menuContainer,
+            alpha: 1,
+            duration: 200,
+            ease: 'Power1'
         });
     }
 
@@ -119,26 +178,38 @@ export default class MainGameScene extends Phaser.Scene {
         const { width, height } = this.scale;
         if (!this.playerPet) return;
         
-        this.playerPet.setPosition(width / 2, height / 2 + 50);
-        this.ui.levelText.setPosition(width / 2, height * 0.1);
+        // 1. Posisikan Pet di tengah, sedikit ke bawah
+        this.playerPet.setPosition(width / 2, height / 2 + 100);
 
-        // Status bars
-        const statusStartX = width * 0.05;
-        const statusStartY = height * 0.1;
-        Object.values(this.ui.statusBars).forEach((element, index) => {
-            element.container.setPosition(statusStartX, statusStartY + index * 60);
-        });
+        // 2. Posisikan Level Text di tengah atas
+        this.ui.levelText.setPosition(width / 2, height * 0.15);
         
-        // Berry text
-        this.ui.berryText.setPosition(width * 0.95, statusStartY);
+        // Gambar ulang border untuk level text
+        const textBounds = this.ui.levelText.getBounds();
+        this.ui.levelBorder.clear()
+            .lineStyle(3, 0xFFFFFF, 1)
+            .strokeRoundedRect(textBounds.x - 4, textBounds.y - 4, textBounds.width + 8, textBounds.height + 8, 10);
+        
+        // 3. Posisikan Status Bars di kiri atas
+        const statusStartX = width * 0.08;
+        const statusStartY = height * 0.15;
+        Object.values(this.ui.statusBars).forEach((element, index) => {
+            element.container.setPosition(statusStartX, statusStartY + index * 50);
+        });
 
-        // Tombol Aksi
+        // 4. Posisikan Icon Panel di kanan atas
+        const iconStartX = width * 0.92;
+        this.ui.iconPanel.profile.setPosition(iconStartX, statusStartY);
+        this.ui.iconPanel.bag.setPosition(iconStartX, statusStartY + 60);
+        this.ui.iconPanel.home.setPosition(iconStartX, statusStartY + 120);
+
+        // 5. Posisikan Tombol Aksi di bawah
         const buttonY = height * 0.9;
         const buttonSpacing = width * 0.22;
         const buttonStartX = width / 2 - (buttonSpacing * 1.5);
-        this.ui.feedButton.setPosition(buttonStartX, buttonY);
-        this.ui.sleepButton.setPosition(buttonStartX + buttonSpacing, buttonY);
-        this.ui.trainingButton.setPosition(buttonStartX + buttonSpacing * 2, buttonY);
-        this.ui.playButton.setPosition(buttonStartX + buttonSpacing * 3, buttonY);
+        this.ui.actionButtons.feed.setPosition(buttonStartX, buttonY);
+        this.ui.actionButtons.sleep.setPosition(buttonStartX + buttonSpacing, buttonY);
+        this.ui.actionButtons.training.setPosition(buttonStartX + buttonSpacing * 2, buttonY);
+        this.ui.actionButtons.play.setPosition(buttonStartX + buttonSpacing * 3, buttonY);
     }
 }
