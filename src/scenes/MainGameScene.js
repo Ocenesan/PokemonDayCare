@@ -1,6 +1,7 @@
 import Pet from '../game/Pet.js';
 import FeedPopup from '../ui/FeedPopup.js';
 import InventoryPopup from '../ui/InventoryPopup.js';
+import GameOverPopup from '../ui/GameOverPopup.js';
 import * as PokeAPI from '../game/PokeAPIService.js';
 
 export default class MainGameScene extends Phaser.Scene {
@@ -25,6 +26,8 @@ export default class MainGameScene extends Phaser.Scene {
         this.load.image('feed-box', 'assets/images/icons/box-feed.png');
         this.load.image('closeButton', 'assets/images/icons/close-red.png');
         this.load.image('inventory', 'assets/images/icons/inventory.png');
+        this.load.image('gameovertitle', 'assets/images/icons/gameover.png');
+        this.load.image('restartButton', 'assets/images/icons/restart.png');
     }
 
     create() {
@@ -46,14 +49,15 @@ export default class MainGameScene extends Phaser.Scene {
         this.scale.on('resize', this.repositionUI, this);
         this.playerPet.on('onStatChange', this.updateUI, this);
         this.playerPet.on('onLevelUp', (level) => this.ui.levelText.setText(`Level ${level}`), this);
-        this.playerPet.on('onFaint', (reason) => this.showGameOverPopup('Fainted!', reason), this);
-        this.playerPet.on('onRunAway', (reason) => this.showGameOverPopup('Ran Away!', reason), this);
+        this.playerPet.on('onFaint', (reason) => this.showGameOverPopup('Your Pokemon fainted :(', reason), this);
+        this.playerPet.on('onRunAway', (reason) => this.showGameOverPopup('Your Pokemon Ran Away!', reason), this);
         this.playerPet.on('onEvolve', (data) => this.showEvolutionPopup(data), this);
         this.playerPet.on('onInventoryChange', () => {
             if (this.ui.inventoryPopup && this.ui.inventoryPopup.active) {
                 this.ui.inventoryPopup.updateItemList();
             }
         }, this);
+        this.events.on('shutdown', this.shutdown, this);
     }
 
     // --- Fungsi Pembuatan UI ---
@@ -99,6 +103,9 @@ export default class MainGameScene extends Phaser.Scene {
                     this.ui.inventoryPopup = new InventoryPopup(this, this.scale.width / 2, this.scale.height / 2, this.playerPet);
                 }),
             home: this.add.image(0, 0, 'homeIcon').setInteractive({ cursor: 'pointer' }).setScale(0.07)
+                .on('pointerdown', () => {
+                        this.scene.start('Homescreen');
+                    })
         };
         
         // Tombol Aksi Utama
@@ -164,9 +171,6 @@ export default class MainGameScene extends Phaser.Scene {
         }
     }
 
-    /**
-     * Fungsi helper untuk membuat dan memposisikan popup setelah aset siap.
-     */
     createAndPositionPopup() {
         const anchorX = this.ui.lastStatusBarContainer.x;
         const anchorY = this.ui.lastStatusBarContainer.y;
@@ -188,7 +192,6 @@ export default class MainGameScene extends Phaser.Scene {
         });
     }
     
-    // --- Fungsi Logika UI ---
     showSubMenu(type) {
         if (this.ui.subMenu) this.ui.subMenu.destroy();
         
@@ -240,13 +243,43 @@ export default class MainGameScene extends Phaser.Scene {
         });
     }
 
-    showGameOverPopup(title, message) {
-        // ... (logika untuk menampilkan popup game over) ...
+    showGameOverPopup(message, subMessage) {
+        // Hentikan semua interaksi UI lain
+        this.children.list.forEach(child => {
+            if (child.setInteractive) child.disableInteractive();
+        });
+
+        // Hentikan timer pet agar status tidak terus berkurang
+        if (this.playerPet && this.playerPet.decayTimer) {
+            this.playerPet.decayTimer.paused = true;
+        }
+
+        // Buat instance dari GameOverPopup
+        new GameOverPopup(this, 'GAME OVER', message, subMessage);
     }
+    
     showEvolutionPopup(data) {
         // ... (logika untuk menampilkan popup evolusi) ...
     }
     
+    shutdown() {
+        console.log("Shutting down MainGameScene...");
+
+        // 1. Hancurkan instance Pet untuk menghentikan timer dan membersihkan listener
+        if (this.playerPet) {
+            this.playerPet.destroy();
+            this.playerPet = null;
+        }
+
+        // 2. Hancurkan semua popup yang mungkin masih ada
+        if (this.ui.feedPopup) this.ui.feedPopup.destroy();
+        if (this.ui.inventoryPopup) this.ui.inventoryPopup.destroy();
+        if (this.ui.gameOverPopup) this.ui.gameOverPopup.destroy();
+        
+        // 3. Hapus listener dari scale manager untuk mencegah memory leak
+        this.scale.off('resize', this.repositionUI, this);
+    }
+
     // --- Positioning ---
     repositionUI() {
         const { width, height } = this.scale;
