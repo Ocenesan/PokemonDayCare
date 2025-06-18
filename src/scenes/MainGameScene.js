@@ -1,4 +1,8 @@
 import Pet from '../game/Pet.js';
+import FeedPopup from '../ui/FeedPopup.js';
+import InventoryPopup from '../ui/InventoryPopup.js';
+import GameOverPopup from '../ui/GameOverPopup.js';
+import * as PokeAPI from '../game/PokeAPIService.js';
 
 export default class MainGameScene extends Phaser.Scene {
     constructor() {
@@ -19,6 +23,11 @@ export default class MainGameScene extends Phaser.Scene {
         this.load.image('bagIcon', 'assets/images/icons/bag.png');
         this.load.image('homeIcon', 'assets/images/icons/home.png');
         this.load.image('popup-box', 'assets/images/icons/option.png');
+        this.load.image('feed-box', 'assets/images/icons/box-feed.png');
+        this.load.image('closeButton', 'assets/images/icons/close-red.png');
+        this.load.image('inventory', 'assets/images/icons/inventory.png');
+        this.load.image('gameovertitle', 'assets/images/icons/gameover.png');
+        this.load.image('restartButton', 'assets/images/icons/restart.png');
     }
 
     create() {
@@ -40,9 +49,15 @@ export default class MainGameScene extends Phaser.Scene {
         this.scale.on('resize', this.repositionUI, this);
         this.playerPet.on('onStatChange', this.updateUI, this);
         this.playerPet.on('onLevelUp', (level) => this.ui.levelText.setText(`Level ${level}`), this);
-        this.playerPet.on('onFaint', (reason) => this.showGameOverPopup('Fainted!', reason), this);
-        this.playerPet.on('onRunAway', (reason) => this.showGameOverPopup('Ran Away!', reason), this);
+        this.playerPet.on('onFaint', (reason) => this.showGameOverPopup('Your Pokemon fainted :(', reason), this);
+        this.playerPet.on('onRunAway', (reason) => this.showGameOverPopup('Your Pokemon Ran Away!', reason), this);
         this.playerPet.on('onEvolve', (data) => this.showEvolutionPopup(data), this);
+        this.playerPet.on('onInventoryChange', () => {
+            if (this.ui.inventoryPopup && this.ui.inventoryPopup.active) {
+                this.ui.inventoryPopup.updateItemList();
+            }
+        }, this);
+        this.events.on('shutdown', this.shutdown, this);
     }
 
     // --- Fungsi Pembuatan UI ---
@@ -76,13 +91,26 @@ export default class MainGameScene extends Phaser.Scene {
         // Icon Panel Kanan
         this.ui.iconPanel = {
             profile: this.add.image(0, 0, 'profileIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5),
-            bag: this.add.image(0, 0, 'bagIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5),
+            bag: this.add.image(0, 0, 'bagIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5)
+                .on('pointerdown', () => {
+                    // Jika popup sudah ada, jangan buat lagi, cukup bawa ke depan
+                    if (this.ui.inventoryPopup && this.ui.inventoryPopup.active) {
+                        this.children.bringToTop(this.ui.inventoryPopup);
+                        return;
+                    }
+                    if (this.ui.inventoryPopup) this.ui.inventoryPopup.destroy();
+                    
+                    this.ui.inventoryPopup = new InventoryPopup(this, this.scale.width / 2, this.scale.height / 2, this.playerPet);
+                }),
             home: this.add.image(0, 0, 'homeIcon').setInteractive({ cursor: 'pointer' }).setScale(0.07)
+                .on('pointerdown', () => {
+                        this.scene.start('Homescreen');
+                    })
         };
         
         // Tombol Aksi Utama
         this.ui.actionButtons = {
-            feed: this.add.image(0, 0, 'feedButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.playerPet.feed()),
+            feed: this.add.image(0, 0, 'feedButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', this.showFeedPopup, this),
             sleep: this.add.image(0, 0, 'sleepButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.playerPet.isAsleep ? this.playerPet.wakeUp() : this.playerPet.sleep()),
             training: this.add.image(0, 0, 'trainingButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.showSubMenu('train')),
             play: this.add.image(0, 0, 'playButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.showSubMenu('play'))
@@ -101,6 +129,56 @@ export default class MainGameScene extends Phaser.Scene {
         this.ui.levelBorder = this.add.graphics();
     }
     
+    async showFeedPopup() {
+        // Jika popup sudah ada, jangan buat lagi.
+        if (this.ui.feedPopup && this.ui.feedPopup.active) {
+            return;
+        }
+
+        // Hancurkan yang lama jika ada (untuk keamanan)
+        if (this.ui.feedPopup) this.ui.feedPopup.destroy();
+
+        const loadingText = this.add.text(this.scale.width / 2, this.scale.height / 2, 'Loading Berries...', { fontSize: '24px' }).setOrigin(0.5);
+
+        // Logika untuk memuat semua sprite berry yang ada di inventaris
+        const inventory = this.playerPet.stats.inventory;
+        const berryNames = Object.keys(inventory);
+
+        const filesToLoad = [];
+        for (const name of berryNames) {
+            if (!this.textures.exists(`berry_${name}`)) {
+                const berryData = await PokeAPI.getBerry(name);
+                if (berryData) {
+                    const url = await PokeAPI.getBerrySpriteUrl(berryData);
+                    if (url) {
+                        filesToLoad.push({ key: `berry_${name}`, url: url });
+                    }
+                }
+            }
+        }
+        
+        // Mulai loader HANYA jika ada sesuatu yang perlu dimuat
+        if (this.load.inflight.size > 0) {
+            this.load.start();
+            this.load.once('complete', () => {
+                loadingText.destroy();
+                this.createAndPositionPopup();
+            });
+        } else {
+            // Jika semua aset sudah ada, langsung buat popup
+            loadingText.destroy();
+            this.createAndPositionPopup();
+        }
+    }
+
+    createAndPositionPopup() {
+        const anchorX = this.ui.lastStatusBarContainer.x;
+        const anchorY = this.ui.lastStatusBarContainer.y;
+
+        // Buat instance baru dari kelas FeedPopup, dan posisikan
+        this.ui.feedPopup = new FeedPopup(this, anchorX, anchorY + 60, this.playerPet);
+    }
+
     // --- Fungsi Update Tampilan ---
     updateUI(stats) {
         Object.keys(this.ui.statusBars).forEach(key => {
@@ -114,7 +192,6 @@ export default class MainGameScene extends Phaser.Scene {
         });
     }
     
-    // --- Fungsi Logika UI ---
     showSubMenu(type) {
         if (this.ui.subMenu) this.ui.subMenu.destroy();
         
@@ -166,13 +243,43 @@ export default class MainGameScene extends Phaser.Scene {
         });
     }
 
-    showGameOverPopup(title, message) {
-        // ... (logika untuk menampilkan popup game over) ...
+    showGameOverPopup(message, subMessage) {
+        // Hentikan semua interaksi UI lain
+        this.children.list.forEach(child => {
+            if (child.setInteractive) child.disableInteractive();
+        });
+
+        // Hentikan timer pet agar status tidak terus berkurang
+        if (this.playerPet && this.playerPet.decayTimer) {
+            this.playerPet.decayTimer.paused = true;
+        }
+
+        // Buat instance dari GameOverPopup
+        new GameOverPopup(this, 'GAME OVER', message, subMessage);
     }
+    
     showEvolutionPopup(data) {
         // ... (logika untuk menampilkan popup evolusi) ...
     }
     
+    shutdown() {
+        console.log("Shutting down MainGameScene...");
+
+        // 1. Hancurkan instance Pet untuk menghentikan timer dan membersihkan listener
+        if (this.playerPet) {
+            this.playerPet.destroy();
+            this.playerPet = null;
+        }
+
+        // 2. Hancurkan semua popup yang mungkin masih ada
+        if (this.ui.feedPopup) this.ui.feedPopup.destroy();
+        if (this.ui.inventoryPopup) this.ui.inventoryPopup.destroy();
+        if (this.ui.gameOverPopup) this.ui.gameOverPopup.destroy();
+        
+        // 3. Hapus listener dari scale manager untuk mencegah memory leak
+        this.scale.off('resize', this.repositionUI, this);
+    }
+
     // --- Positioning ---
     repositionUI() {
         const { width, height } = this.scale;
