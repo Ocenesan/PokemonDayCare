@@ -3,6 +3,7 @@ import FeedPopup from '../ui/FeedPopup.js';
 import InventoryPopup from '../ui/InventoryPopup.js';
 import GameOverPopup from '../ui/GameOverPopup.js';
 import EvolutionPopup from '../ui/EvolutionPopup.js';
+import ProfilePopup from '../ui/ProfilePopup.js';
 import * as PokeAPI from '../game/PokeAPIService.js';
 
 export default class MainGameScene extends Phaser.Scene {
@@ -10,6 +11,7 @@ export default class MainGameScene extends Phaser.Scene {
         super('MainGameScene');
         this.playerPet = null;
         this.ui = {};
+        this.ui.profilePopup = null;
     }
 
     preload() {
@@ -93,7 +95,19 @@ export default class MainGameScene extends Phaser.Scene {
 
         // Icon Panel Kanan
         this.ui.iconPanel = {
-            profile: this.add.image(0, 0, 'profileIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5),
+            profile: this.add.image(0, 0, 'profileIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5)
+                .on('pointerdown', () => {
+                    // Prevent opening multiple popups
+                    if (this.ui.profilePopup) return;
+
+                    this.playerPet.hide();
+
+                    // Create the popup and pass a callback function for when it closes
+                    this.ui.profilePopup = new ProfilePopup(this, this.playerPet, () => {
+                        this.playerPet.show();
+                        this.ui.profilePopup = null; // Clear the reference
+                    });
+                }),
             bag: this.add.image(0, 0, 'bagIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5)
                 .on('pointerdown', () => {
                     if (this.ui.inventoryPopup && this.ui.inventoryPopup.active) {
