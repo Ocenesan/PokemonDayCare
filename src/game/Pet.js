@@ -153,6 +153,14 @@ export default class Pet extends Phaser.Events.EventEmitter {
         this.emit('onStateChange', { asleep: false });
     }
 
+    updateSprite() {
+        if (this.gameObject && this.gameObject.node) {
+            const petSpriteDiv = this.gameObject.node.querySelector('#pet-sprite');
+            // Update the background image to the new animated sprite
+            petSpriteDiv.style.backgroundImage = `url(${this.spriteUrls.animated})`;
+        }
+    }
+
     // --- Logika Internal Pet ---
     decreaseStats() {
         if (this.isAsleep) {
@@ -176,11 +184,11 @@ export default class Pet extends Phaser.Events.EventEmitter {
     levelUp() {
         this.stats.level++;
         this.stats.exp -= this.stats.maxExp;
-        this.stats.maxExp += 25; // Butuh lebih banyak exp untuk level selanjutnya
+        //this.stats.maxExp += 25; // Butuh lebih banyak exp untuk level selanjutnya
         this.emit('onLevelUp', this.stats.level);
 
-        // Cek evolusi (contoh: evolusi di level 16 & 36)
-        if (this.stats.level === 16 || this.stats.level === 36) {
+        // Cek evolusi (contoh: evolusi di level 15 & 30)
+        if (this.stats.level === 15 || this.stats.level === 30) {
             this.evolve();
         }
     }
@@ -208,10 +216,13 @@ export default class Pet extends Phaser.Events.EventEmitter {
                 this.pokemonData = newPokemonData;
                 this.spriteUrls = PokeAPI.extractPokemonSprites(newPokemonData);
                 this.name = newPokemonData.name;
-                this.wakeUp(); // Bangunkan untuk refresh sprite
+                this.updateSprite(); 
 
                 // Pancarkan event evolusi
-                this.emit('onEvolve', { name: this.name, spriteUrl: this.spriteUrls.animated });
+                this.emit('onEvolve', { 
+                    newName: this.name, 
+                    popupSpriteUrl: this.spriteUrls.default 
+                });
             }
         }
     }

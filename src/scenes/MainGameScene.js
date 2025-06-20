@@ -2,6 +2,7 @@ import Pet from '../game/Pet.js';
 import FeedPopup from '../ui/FeedPopup.js';
 import InventoryPopup from '../ui/InventoryPopup.js';
 import GameOverPopup from '../ui/GameOverPopup.js';
+import EvolutionPopup from '../ui/EvolutionPopup.js';
 import * as PokeAPI from '../game/PokeAPIService.js';
 
 export default class MainGameScene extends Phaser.Scene {
@@ -27,6 +28,7 @@ export default class MainGameScene extends Phaser.Scene {
         this.load.image('closeButton', 'assets/images/icons/close-red.png');
         this.load.image('inventory', 'assets/images/icons/inventory.png');
         this.load.image('gameoverTitle', 'assets/images/icons/gameover.png');
+        this.load.image('upgradeTitle', 'assets/images/icons/upgrade.png');
         this.load.image('restartButton', 'assets/images/icons/restart.png');
     }
 
@@ -51,7 +53,8 @@ export default class MainGameScene extends Phaser.Scene {
         this.playerPet.on('onLevelUp', (level) => this.ui.levelText.setText(`Level ${level}`), this);
         this.playerPet.on('onFaint', (reason) => this.showGameOverPopup('Your Pokemon fainted :(', reason), this);
         this.playerPet.on('onRunAway', (reason) => this.showGameOverPopup('Your Pokemon Ran Away!', reason), this);
-        this.playerPet.on('onEvolve', (data) => this.showEvolutionPopup(data), this);
+        //this.playerPet.on('onEvolve', (data) => this.showEvolutionPopup(data), this);
+        this.playerPet.on('onEvolve', this.showEvolutionPopup, this);
         this.playerPet.on('onInventoryChange', () => {
             if (this.ui.inventoryPopup && this.ui.inventoryPopup.active) {
                 this.ui.inventoryPopup.updateItemList();
@@ -299,7 +302,20 @@ export default class MainGameScene extends Phaser.Scene {
     }
     
     showEvolutionPopup(data) {
-        // ... (logika untuk menampilkan popup evolusi) ...
+        if (this.playerPet) {
+            this.playerPet.hide();
+        }
+
+        // Create the popup
+        const evolutionPopup = new EvolutionPopup(this, data.newName, data.popupSpriteUrl);
+
+        // Listen for when the popup is destroyed (closed)
+        evolutionPopup.on('destroy', () => {
+            // Show the now-evolved pet again
+            if (this.playerPet) {
+                this.playerPet.show();
+            }
+        });
     }
     
     shutdown() {
