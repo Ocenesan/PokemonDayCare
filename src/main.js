@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import HomescreenScene from './scenes/HomescreenScene.js';
 import ChoosePokemonScene from './scenes/ChoosePokemonScene.js';
 import SearchPokemonScene from './scenes/SearchPokemonScene.js';
+import NamingScene from './scenes/NamingScene.js';
 import MainGameScene from './scenes/MainGameScene.js';
 
 const config = {
@@ -26,6 +27,7 @@ const config = {
         HomescreenScene,
         ChoosePokemonScene,
         SearchPokemonScene,
+        NamingScene,
         MainGameScene,
     ]
 };

@@ -164,7 +164,7 @@ export default class ChoosePokemonScene extends Phaser.Scene {
             
             this.registry.set('playerPokemon', { data: pokemonData, sprites: sprites });
             
-            this.time.delayedCall(500, () => { this.scene.start('MainGameScene'); });
+            this.time.delayedCall(500, () => { this.scene.start('NamingScene'); });
 
         } else {
             loadingText.setText(`Gagal memuat data ${pokemonName}!`);

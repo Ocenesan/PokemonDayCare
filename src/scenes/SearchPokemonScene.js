@@ -82,7 +82,7 @@ export default class SearchPokemonScene extends Phaser.Scene {
             this.showFeedbackMessage(`${pokemonData.name.toUpperCase()} ditemukan!`, '#32CD32'); // Hijau limau
 
             this.time.delayedCall(1500, () => {
-                this.scene.start('MainGameScene');
+                this.scene.start('NamingScene');
             });
         } else {
             this.showFeedbackMessage(`Pokémon "${pokemonName}" tidak ditemukan!`, 'red');

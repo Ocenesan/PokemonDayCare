@@ -8,7 +8,7 @@ export default class Pet extends Phaser.Events.EventEmitter {
         this.scene = scene;
         this.pokemonData = pokemonRegistryData.data;
         this.spriteUrls = pokemonRegistryData.sprites;
-        this.name = this.pokemonData.name;
+        this.name = pokemonRegistryData.nickname || this.pokemonData.name;
         this.isAsleep = false;
         
         // --- Properti Status Game ---
