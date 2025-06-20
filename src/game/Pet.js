@@ -61,7 +61,7 @@ export default class Pet extends Phaser.Events.EventEmitter {
         }
         console.log(`Feeding with ${berryName}. Current count: ${this.stats.inventory.Berries[berryName]}`);
 
-        this.stats.inventory[berryName]--;
+        this.stats.inventory.Berries[berryName]--;
 
         let hungerGain = 20; 
         if (berryName === 'oran') hungerGain = 30;
@@ -70,8 +70,8 @@ export default class Pet extends Phaser.Events.EventEmitter {
         
         this.emit('onStatChange', this.stats);
 
-        if (this.stats.inventory[berryName] <= 0) {
-            delete this.stats.inventory[berryName];
+        if (this.stats.inventory.Berries[berryName] <= 0) {
+            delete this.stats.inventory.Berries[berryName];
         }
 
         this.emit('onInventoryChange', this.stats.inventory); 
