@@ -141,8 +141,14 @@ export default class MainGameScene extends Phaser.Scene {
         const loadingText = this.add.text(this.scale.width / 2, this.scale.height / 2, 'Loading Berries...', { fontSize: '24px' }).setOrigin(0.5);
 
         // Logika untuk memuat semua sprite berry yang ada di inventaris
-        const inventory = this.playerPet.stats.inventory;
+        const inventory = this.playerPet.stats.inventory.Berries || {};
         const berryNames = Object.keys(inventory);
+
+        if (berryNames.length === 0) {
+            loadingText.destroy();
+            this.createAndPositionPopup();
+            return;
+        }
 
         const filesToLoad = [];
         for (const name of berryNames) {
@@ -157,17 +163,17 @@ export default class MainGameScene extends Phaser.Scene {
             }
         }
         
-        // Mulai loader HANYA jika ada sesuatu yang perlu dimuat
-        if (this.load.inflight.size > 0) {
-            this.load.start();
-            this.load.once('complete', () => {
-                loadingText.destroy();
-                this.createAndPositionPopup();
-            });
-        } else {
-            // Jika semua aset sudah ada, langsung buat popup
+        const onAssetsReady = () => {
             loadingText.destroy();
             this.createAndPositionPopup();
+        };
+
+        if (filesToLoad.length > 0) {
+            filesToLoad.forEach(file => this.load.image(file.key, file.url));
+            this.load.start();
+            this.load.once('complete', onAssetsReady);
+        } else {
+            onAssetsReady();
         }
     }
 
@@ -177,6 +183,12 @@ export default class MainGameScene extends Phaser.Scene {
 
         // Buat instance baru dari kelas FeedPopup, dan posisikan
         this.ui.feedPopup = new FeedPopup(this, anchorX, anchorY + 60, this.playerPet);
+
+        this.time.delayedCall(1, () => {
+            if (this.ui.feedPopup && this.ui.feedPopup.active) {
+                this.ui.feedPopup.populateGrid();
+            }
+        });
     }
 
     // --- Fungsi Update Tampilan ---

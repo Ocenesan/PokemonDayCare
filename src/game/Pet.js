@@ -20,9 +20,11 @@ export default class Pet extends Phaser.Events.EventEmitter {
             maxExp: 50,
             level: 1,
             inventory: {
-                'cheri': 3,
-                'pecha': 2,
-                'oran': 5
+                'Berries': { // Pastikan 'B'-nya besar
+                    'cheri': 3,
+                    'pecha': 2,
+                    'oran': 5
+                },
             }
         };
 

@@ -5,6 +5,8 @@ export default class FeedPopup extends Phaser.GameObjects.Container {
         super(scene, x, y);
         this.scene = scene;
         this.petInstance = petInstance;
+        
+        this.setDepth(100);
         scene.add.existing(this);
 
         const bg = scene.add.image(0, 0, 'feed-box').setScale(0.7).setOrigin(0, 0);
@@ -48,7 +50,7 @@ export default class FeedPopup extends Phaser.GameObjects.Container {
     // Fungsi ini dipanggil pertama kali dan setiap kali inventaris berubah
     refreshGrid() {
         this.gridContainer.removeAll(true);
-        const inventory = this.petInstance.stats.inventory;
+        const inventory = this.petInstance.stats.inventory.Berries || {};
         const berryNames = Object.keys(inventory);
 
         if (berryNames.length === 0) {
@@ -71,13 +73,14 @@ export default class FeedPopup extends Phaser.GameObjects.Container {
                 const col = index % gridCols;
                 const x = startX + col * colWidth;
                 const y = startY + row * rowHeight;
-                
-                const itemContainer = this.scene.add.container(x, y).setInteractive({ cursor: 'pointer' });
+
+                const itemContainer = this.scene.add.container(x, y);
                 const itemBg = this.scene.add.graphics().fillStyle(0xdcc8ff, 1).fillRoundedRect(-35, -35, 70, 70, 10);
                 const berrySprite = this.scene.add.image(0, -5, `berry_${name}`).setScale(1.2);
                 const countText = this.scene.add.text(20, 25, `x${inventory[name]}`, { fontFamily: 'Pixelify Sans', fontSize: '14px', color: '#333' }).setOrigin(0.5);
-
                 itemContainer.add([itemBg, berrySprite, countText]);
+                itemContainer.setSize(70, 70);
+                itemContainer.setInteractive({ cursor: 'pointer' });
 
                 itemContainer.on('pointerdown', () => {
                     if (this.petInstance.stats.inventory[name] > 0) {
@@ -90,36 +93,6 @@ export default class FeedPopup extends Phaser.GameObjects.Container {
                 // Log jika tekstur tidak ditemukan, ini sangat membantu debugging
                 console.warn(`Texture 'berry_${name}' tidak ditemukan saat mencoba membuat grid.`);
             }
-        });
-    }
-
-    createBerryGrid(inventory, berryNames) {
-        const gridCols = 3;
-        const colWidth = 80;
-        const rowHeight = 80;
-        const startX = -colWidth;
-        const startY = -this.list[0].displayHeight + 90; // list[0] adalah bg
-
-        berryNames.forEach((name, index) => {
-            const row = Math.floor(index / gridCols);
-            const col = index % gridCols;
-            const x = startX + col * colWidth;
-            const y = startY + row * rowHeight;
-            
-            const itemContainer = this.scene.add.container(x, y).setInteractive({ cursor: 'pointer' });
-            itemContainer.setData('isBerryItem', true);
-
-            const itemBg = this.scene.add.graphics().fillStyle(0xdcc8ff, 1).fillRoundedRect(-35, -35, 70, 70, 10);
-            const berrySprite = this.scene.add.image(0, -5, `berry_${name}`).setScale(1.5);
-            const countText = this.scene.add.text(25, 25, `x${inventory[name]}`, { fontFamily: 'Pixelify Sans', fontSize: '14px', color: '#333' }).setOrigin(0.5);
-
-            itemContainer.add([itemBg, berrySprite, countText]);
-
-            itemContainer.on('pointerdown', () => {
-                this.petInstance.feed(name);
-            });
-
-            this.add(itemContainer); // Tambahkan item ke container popup
         });
     }
 
