@@ -23,9 +23,9 @@ const config = {
 
     scene: [
         // Daftarkan semua scene Anda di sini. Urutan pertama akan dijalankan lebih dulu.
-        //HomescreenScene,
+        HomescreenScene,
         ChoosePokemonScene,
-        //SearchPokemonScene,
+        SearchPokemonScene,
         MainGameScene,
     ]
 };

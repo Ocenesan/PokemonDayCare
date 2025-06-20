@@ -26,7 +26,7 @@ export default class MainGameScene extends Phaser.Scene {
         this.load.image('feed-box', 'assets/images/icons/box-feed.png');
         this.load.image('closeButton', 'assets/images/icons/close-red.png');
         this.load.image('inventory', 'assets/images/icons/inventory.png');
-        this.load.image('gameovertitle', 'assets/images/icons/gameover.png');
+        this.load.image('gameoverTitle', 'assets/images/icons/gameover.png');
         this.load.image('restartButton', 'assets/images/icons/restart.png');
     }
 
@@ -287,6 +287,11 @@ export default class MainGameScene extends Phaser.Scene {
         // Hentikan timer pet agar status tidak terus berkurang
         if (this.playerPet && this.playerPet.decayTimer) {
             this.playerPet.decayTimer.paused = true;
+        }
+
+        // Hide the pet sprite before showing the game over screen
+        if (this.playerPet) {
+            this.playerPet.hide();
         }
 
         // Buat instance dari GameOverPopup
