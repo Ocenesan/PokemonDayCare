@@ -93,14 +93,22 @@ export default class MainGameScene extends Phaser.Scene {
             profile: this.add.image(0, 0, 'profileIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5),
             bag: this.add.image(0, 0, 'bagIcon').setInteractive({ cursor: 'pointer' }).setScale(0.5)
                 .on('pointerdown', () => {
-                    // Jika popup sudah ada, jangan buat lagi, cukup bawa ke depan
                     if (this.ui.inventoryPopup && this.ui.inventoryPopup.active) {
                         this.children.bringToTop(this.ui.inventoryPopup);
                         return;
                     }
-                    if (this.ui.inventoryPopup) this.ui.inventoryPopup.destroy();
-                    
+                    this.playerPet.hide();
+
+                    // 2. Create the inventory popup instance
                     this.ui.inventoryPopup = new InventoryPopup(this, this.scale.width / 2, this.scale.height / 2, this.playerPet);
+                    
+                    // 3. Listen for when the popup is destroyed
+                    this.ui.inventoryPopup.on('destroy', () => {
+                        // When it's destroyed, show the pet again
+                        this.playerPet.show();
+                        // Clear the reference so we know the popup is gone
+                        this.ui.inventoryPopup = null;
+                    });
                 }),
             home: this.add.image(0, 0, 'homeIcon').setInteractive({ cursor: 'pointer' }).setScale(0.07)
                 .on('pointerdown', () => {

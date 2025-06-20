@@ -233,6 +233,18 @@ export default class Pet extends Phaser.Events.EventEmitter {
         this.gameObject.setPosition(x, y);
     }
     
+    show() {
+        if (this.gameObject) {
+            this.gameObject.setVisible(true);
+        }
+    }
+
+    hide() {
+        if (this.gameObject) {
+            this.gameObject.setVisible(false);
+        }
+    }
+
     destroy() {
         if (this.decayTimer) this.decayTimer.destroy();
         if (this.gameObject) this.gameObject.destroy();
