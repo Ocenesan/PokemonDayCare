@@ -8,7 +8,7 @@ export default class Pet extends Phaser.Events.EventEmitter {
         this.scene = scene;
         this.pokemonData = pokemonRegistryData.data;
         this.spriteUrls = pokemonRegistryData.sprites;
-        this.name = pokemonRegistryData.nickname || this.pokemonData.name;
+        this.name = this.pokemonData.name;
         this.isAsleep = false;
         
         // --- Properti Status Game ---
@@ -201,12 +201,13 @@ export default class Pet extends Phaser.Events.EventEmitter {
         let nextEvolutionName = null;
 
         // Cari tahap evolusi berikutnya
-        while (currentStage && currentStage.species.name === this.name) {
-            if (currentStage.evolves_to.length > 0) {
-                nextEvolutionName = currentStage.evolves_to[0].species.name;
-                break;
-            }
+        while (currentStage && currentStage.species.name !== this.name) {
             currentStage = currentStage.evolves_to[0];
+        }
+
+        // Check if there is a next evolution stage
+        if (currentStage && currentStage.evolves_to.length > 0) {
+            nextEvolutionName = currentStage.evolves_to[0].species.name;
         }
 
         if (nextEvolutionName) {
@@ -223,6 +224,17 @@ export default class Pet extends Phaser.Events.EventEmitter {
                     newName: this.name, 
                     popupSpriteUrl: this.spriteUrls.default 
                 });
+
+                // Find the new Pokémon in the chain again to check *its* next stage
+                let newCurrentStage = evolutionChain.chain;
+                while(newCurrentStage && newCurrentStage.species.name !== this.name) {
+                    newCurrentStage = newCurrentStage.evolves_to[0];
+                }
+                
+                // If the new stage has no more evolutions, it's the final form
+                if (newCurrentStage && newCurrentStage.evolves_to.length === 0) {
+                    this.emit('onFinalEvolution', { name: this.name });
+                }
             }
         }
     }

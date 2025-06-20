@@ -4,6 +4,7 @@ import InventoryPopup from '../ui/InventoryPopup.js';
 import GameOverPopup from '../ui/GameOverPopup.js';
 import EvolutionPopup from '../ui/EvolutionPopup.js';
 import ProfilePopup from '../ui/ProfilePopup.js';
+import WonPopup from '../ui/WonPopup.js';
 import * as PokeAPI from '../game/PokeAPIService.js';
 
 export default class MainGameScene extends Phaser.Scene {
@@ -55,8 +56,8 @@ export default class MainGameScene extends Phaser.Scene {
         this.playerPet.on('onLevelUp', (level) => this.ui.levelText.setText(`Level ${level}`), this);
         this.playerPet.on('onFaint', (reason) => this.showGameOverPopup('Your Pokemon fainted :(', reason), this);
         this.playerPet.on('onRunAway', (reason) => this.showGameOverPopup('Your Pokemon Ran Away!', reason), this);
-        //this.playerPet.on('onEvolve', (data) => this.showEvolutionPopup(data), this);
         this.playerPet.on('onEvolve', this.showEvolutionPopup, this);
+        this.playerPet.on('onFinalEvolution', this.showWonPopup, this);
         this.playerPet.on('onInventoryChange', () => {
             if (this.ui.inventoryPopup && this.ui.inventoryPopup.active) {
                 this.ui.inventoryPopup.updateItemList();
@@ -326,6 +327,23 @@ export default class MainGameScene extends Phaser.Scene {
         // Listen for when the popup is destroyed (closed)
         evolutionPopup.on('destroy', () => {
             // Show the now-evolved pet again
+            if (this.playerPet) {
+                this.playerPet.show();
+            }
+        });
+    }
+
+    showWonPopup(data) {
+        // Hide the pet while the popup is active
+        if (this.playerPet) {
+            this.playerPet.hide();
+        }
+
+        const wonPopup = new WonPopup(this, data.name);
+
+        // Listen for when the "Continue" button is clicked and the popup is destroyed
+        wonPopup.on('destroy', () => {
+            // Show the pet again
             if (this.playerPet) {
                 this.playerPet.show();
             }
