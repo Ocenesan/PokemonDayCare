@@ -110,7 +110,7 @@ export default class MainGameScene extends Phaser.Scene {
         
         // Tombol Aksi Utama
         this.ui.actionButtons = {
-            feed: this.add.image(0, 0, 'feedButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', this.showFeedPopup, this),
+            feed: this.add.image(0, 0, 'feedButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', this.toggleFeedPopup, this),
             sleep: this.add.image(0, 0, 'sleepButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.playerPet.isAsleep ? this.playerPet.wakeUp() : this.playerPet.sleep()),
             training: this.add.image(0, 0, 'trainingButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.showSubMenu('train')),
             play: this.add.image(0, 0, 'playButton').setScale(0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.showSubMenu('play'))
@@ -129,6 +129,18 @@ export default class MainGameScene extends Phaser.Scene {
         this.ui.levelBorder = this.add.graphics();
     }
     
+    toggleFeedPopup() {
+        // If the popup exists and is active, close it.
+        if (this.ui.feedPopup && this.ui.feedPopup.active) {
+            this.ui.feedPopup.closePopup();
+            this.ui.feedPopup = null; // Clear the reference
+        } 
+        // Otherwise, create and show it.
+        else {
+            this.showFeedPopup();
+        }
+    }
+
     async showFeedPopup() {
         // Jika popup sudah ada, jangan buat lagi.
         if (this.ui.feedPopup && this.ui.feedPopup.active) {
@@ -139,6 +151,7 @@ export default class MainGameScene extends Phaser.Scene {
         if (this.ui.feedPopup) this.ui.feedPopup.destroy();
 
         const loadingText = this.add.text(this.scale.width / 2, this.scale.height / 2, 'Loading Berries...', { fontSize: '24px' }).setOrigin(0.5);
+        loadingText.setDepth(101);
 
         // Logika untuk memuat semua sprite berry yang ada di inventaris
         const inventory = this.playerPet.stats.inventory.Berries || {};
@@ -165,7 +178,9 @@ export default class MainGameScene extends Phaser.Scene {
         
         const onAssetsReady = () => {
             loadingText.destroy();
-            this.createAndPositionPopup();
+            const anchorX = this.ui.lastStatusBarContainer.x;
+            const anchorY = this.ui.lastStatusBarContainer.y;
+            this.ui.feedPopup = new FeedPopup(this, anchorX, anchorY + 60, this.playerPet);
         };
 
         if (filesToLoad.length > 0) {

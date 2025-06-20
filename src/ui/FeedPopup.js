@@ -20,6 +20,8 @@ export default class FeedPopup extends Phaser.GameObjects.Container {
         this.gridContainer = scene.add.container(0, 0);
         this.add(this.gridContainer);
 
+        this.refreshGrid();
+        
         // Dengarkan event perubahan inventaris untuk me-refresh grid
         this.petInstance.on('onInventoryChange', this.refreshGrid, this);
     }
@@ -68,30 +70,35 @@ export default class FeedPopup extends Phaser.GameObjects.Container {
         const startY = 60;
 
         berryNames.forEach((name, index) => {
-            if (this.scene.textures.exists(`berry_${name}`)) {
+            if (inventory[name] > 0 && this.scene.textures.exists(`berry_${name}`)) {
                 const row = Math.floor(index / gridCols);
                 const col = index % gridCols;
                 const x = startX + col * colWidth;
                 const y = startY + row * rowHeight;
 
                 const itemContainer = this.scene.add.container(x, y);
+                itemContainer.setSize(70, 70);
+                itemContainer.setInteractive({ cursor: 'pointer' });
+
                 const itemBg = this.scene.add.graphics().fillStyle(0xdcc8ff, 1).fillRoundedRect(-35, -35, 70, 70, 10);
                 const berrySprite = this.scene.add.image(0, -5, `berry_${name}`).setScale(1.2);
                 const countText = this.scene.add.text(20, 25, `x${inventory[name]}`, { fontFamily: 'Pixelify Sans', fontSize: '14px', color: '#333' }).setOrigin(0.5);
                 itemContainer.add([itemBg, berrySprite, countText]);
-                itemContainer.setSize(70, 70);
-                itemContainer.setInteractive({ cursor: 'pointer' });
+
+                const berryNameToFeed = name; 
 
                 itemContainer.on('pointerdown', () => {
-                    if (this.petInstance.stats.inventory[name] > 0) {
-                        this.petInstance.feed(name);
+                    console.log(`Clicked on: ${berryNameToFeed}`);
+                    if (this.petInstance.stats.inventory.Berries[berryNameToFeed] > 0) {
+                        this.petInstance.feed(berryNameToFeed);
                     }
                 });
 
                 this.gridContainer.add(itemContainer);
             } else {
-                // Log jika tekstur tidak ditemukan, ini sangat membantu debugging
-                console.warn(`Texture 'berry_${name}' tidak ditemukan saat mencoba membuat grid.`);
+                if (!this.scene.textures.exists(`berry_${name}`)) {
+                    console.warn(`Texture 'berry_${name}' tidak ditemukan saat mencoba membuat grid.`);
+                }
             }
         });
     }

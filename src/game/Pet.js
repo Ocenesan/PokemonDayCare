@@ -25,6 +25,10 @@ export default class Pet extends Phaser.Events.EventEmitter {
                     'pecha': 2,
                     'oran': 5
                 },
+                'General': { 
+                    'poke-ball': 10,
+                    'potion': 5
+                }
             }
         };
 
@@ -50,23 +54,26 @@ export default class Pet extends Phaser.Events.EventEmitter {
         });
     }
 
-    // --- Metode Aksi yang Dipanggil dari Scene ---
     feed(berryName) {
-        if (this.isAsleep || !this.stats.inventory[berryName] || this.stats.inventory[berryName] <= 0) {
+        if (this.isAsleep || !this.stats.inventory.Berries || !this.stats.inventory.Berries[berryName] || this.stats.inventory.Berries[berryName] <= 0) {
+            console.warn(`Mencoba memberi makan dengan ${berryName}, tetapi tidak ada di inventaris atau pet sedang tidur.`);
             return;
         }
+        console.log(`Feeding with ${berryName}. Current count: ${this.stats.inventory.Berries[berryName]}`);
+
         this.stats.inventory[berryName]--;
 
-        let hungerGain = 20; // Default gain
+        let hungerGain = 20; 
         if (berryName === 'oran') hungerGain = 30;
         if (berryName === 'pecha') this.stats.boredom = Math.min(100, this.stats.boredom + 10);
         this.stats.hunger = Math.min(100, this.stats.hunger + hungerGain);
         
+        this.emit('onStatChange', this.stats);
+
         if (this.stats.inventory[berryName] <= 0) {
             delete this.stats.inventory[berryName];
         }
 
-        this.emit('onStatChange', this.stats);
         this.emit('onInventoryChange', this.stats.inventory); 
     }
 
@@ -95,26 +102,24 @@ export default class Pet extends Phaser.Events.EventEmitter {
                 this.addExp(50);
                 break;
             case 'hunting':
-                this.stats.hunger -= 5; this.stats.boredom -= 5; this.stats.tired -= 10;
-                this.stats.berries += 3; // Asumsi 'berries' adalah properti lama, kita ganti ke inventory
+                this.stats.hunger -= 10; this.stats.boredom -= 5; this.stats.tired -= 10;
                 this.addExp(25);
                 break;
-            // --- LOGIKA BARU UNTUK STROLLING ---
             case 'strolling':
                 this.stats.hunger -= 4; this.stats.boredom += 8; this.stats.tired -= 5;
                 
                 // Ambil 3 berry acak
                 console.log("Strolling for berries...");
+                if (!this.stats.inventory.Berries) {
+                    this.stats.inventory.Berries = {};
+                }
+
                 for (let i = 0; i < 3; i++) {
                     const randomBerryId = Phaser.Math.Between(1, 64);
                     const berryData = await PokeAPI.getBerry(randomBerryId);
                     if (berryData) {
                         const berryName = berryData.name;
-                        if (this.stats.inventory[berryName]) {
-                            this.stats.inventory[berryName]++;
-                        } else {
-                            this.stats.inventory[berryName] = 1;
-                        }
+                        this.stats.inventory.Berries[berryName] = (this.stats.inventory.Berries[berryName] || 0) + 1;
                         console.log(`Found a ${berryName} berry!`);
                     }
                 }

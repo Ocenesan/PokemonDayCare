@@ -43,8 +43,8 @@ export default class InventoryPopup extends Phaser.GameObjects.Container {
         // Gabungkan semua item dari kategori yang berbeda
         const inventory = this.petInstance.stats.inventory;
         const allItems = {
-            ...inventory.General,
-            'Berries': Object.values(inventory.Berries).reduce((sum, count) => sum + count, 0)
+            ...(inventory.General || {}),
+            'Berries': Object.values(inventory.Berries || {}).reduce((sum, count) => sum + count, 0)
         };
 
         const itemNames = Object.keys(allItems);
